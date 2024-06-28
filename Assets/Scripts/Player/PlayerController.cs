@@ -22,11 +22,11 @@ public class PlayerController
     {
         this.playerView = playerView;
         this.playerView.SetController(this);
-
         this.playerScriptableObject = playerScriptableObject;
         this.playerScriptableObject.KeysEquipped = 0;
-        EventService.Instance.OnLightSwitchToggled.AddListener(onLightSwitch);
         playerState = PlayerState.InDark;
+
+        EventService.Instance.OnLightSwitchToggled.AddListener(onLightSwitch);
     }
 
     ~PlayerController()

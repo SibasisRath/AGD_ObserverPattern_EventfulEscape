@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.MPE;
 using UnityEngine;
 using static LightSwitchView;
 
@@ -8,14 +9,9 @@ public class LightSwitchView : MonoBehaviour, IInteractable
     [SerializeField] private List<Light> lightsources = new List<Light>();
     private SwitchState currentState;
 
-    //public static event Action lightToggledAction;
+    private void OnEnable() => EventService.Instance.OnLightSwitchToggled.AddListener(onLightSwitch);
 
-    private void OnEnable() => EventService.Instance.OnLightSwitchToggled.AddListener(OnLightSwitch);
-
-    private void OnDisable() => EventService.Instance.OnLightSwitchToggled.RemoveListener(OnLightSwitch);
-    /*
-        public delegate void LightSwitchStateDelegate(); // signature
-        public static LightSwitchStateDelegate lightSwitchState;*/
+    private void OnDisable() => EventService.Instance.OnLightSwitchToggled.RemoveListener(onLightSwitch);
 
     private void Start() => currentState = SwitchState.Off;
 
