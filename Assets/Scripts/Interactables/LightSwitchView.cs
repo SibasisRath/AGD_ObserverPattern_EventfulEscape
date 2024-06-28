@@ -40,7 +40,7 @@ public class LightSwitchView : MonoBehaviour, IInteractable
         }
     }
 
-    private void onLightSwitch()
+    private void OnLightSwitch()
     {
         toggleLights();
         GameService.Instance.GetSoundView().PlaySoundEffects(SoundType.SwitchSound);
