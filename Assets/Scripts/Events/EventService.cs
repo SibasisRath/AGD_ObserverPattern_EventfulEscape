@@ -1,6 +1,6 @@
-
 public class EventService
 {
+
     private static EventService instance;
     public static EventService Instance
     {
@@ -12,7 +12,7 @@ public class EventService
             }
             return instance;
         }
-    }
+    }  
 
     public EventController OnLightSwitchToggled { get; private set; }
     public EventController<int> OnKeyPickedUp { get; private set; }
