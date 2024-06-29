@@ -14,12 +14,14 @@ public class EventService
         }
     }  
 
-    public EventController OnLightSwitchToggled {  get; private set; }
-    public EventController<int> OnKeyPickUp { get; private set; }
+    public EventController OnLightSwitchToggled { get; private set; }
+    public EventController<int> OnKeyPickedUp { get; private set; }
+    public EventController OnLightsOffByGhostEvent { get; private set; }
 
     public EventService()
     {
         OnLightSwitchToggled = new EventController();
-        OnKeyPickUp = new EventController<int>();
+        OnKeyPickedUp = new EventController<int>();
+        OnLightsOffByGhostEvent = new EventController();
     }
 }
