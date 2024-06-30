@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController
 {
     public bool IsInteracted;
 
-    private PlayerView playerView;
-    private PlayerScriptableObject playerScriptableObject;
+    private readonly PlayerView playerView;
+    private readonly PlayerScriptableObject playerScriptableObject;
     private float velocity;
     private float horizontalAxis;
     private float verticalAxis;
@@ -37,7 +35,7 @@ public class PlayerController
         EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(onLightsTurnedOffByGhost);
         EventService.Instance.OnKeyPickedUp.RemoveListener(onKeysPickedUp);
     }
-    public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) ? true : (Input.GetKeyUp(KeyCode.E) ? false : IsInteracted);
+    public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) || (!Input.GetKeyUp(KeyCode.E) && IsInteracted);
 
     public void Jump(Rigidbody playerRigidbody, Transform transform)
     {
@@ -53,9 +51,7 @@ public class PlayerController
     {
         GetInput();
 
-        Quaternion rotation;
-        Vector3 position;
-        calculatePositionRotation(playerRigidbody, transform, out rotation, out position);
+        calculatePositionRotation(playerRigidbody, transform, out Quaternion rotation, out Vector3 position);
 
         playerRigidbody.MoveRotation(rotation);
         playerRigidbody.MovePosition(position);
@@ -75,7 +71,7 @@ public class PlayerController
     }
     private void calculatePositionRotation(Rigidbody playerRigidbody, Transform transform, out Quaternion rotation, out Vector3 position)
     {
-        Vector3 lookRotation = new Vector3(0, mouseX * playerScriptableObject.sensitivity, 0);
+        Vector3 lookRotation = new(0, mouseX * playerScriptableObject.sensitivity, 0);
         Vector3 movement = (transform.forward * verticalAxis + transform.right * horizontalAxis);
 
         rotation = playerRigidbody.rotation * Quaternion.Euler(lookRotation);
