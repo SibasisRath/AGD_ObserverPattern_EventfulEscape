@@ -23,8 +23,7 @@ public class PlayerView : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        IInteractable interactable;
-        if (other.TryGetComponent(out interactable) && playerController.IsInteracted)
+        if (other.TryGetComponent(out IInteractable interactable) && playerController.IsInteracted)
         {
             playerController.IsInteracted = false;
             interactable.Interact();

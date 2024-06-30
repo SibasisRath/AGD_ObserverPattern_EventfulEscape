@@ -6,10 +6,7 @@ public class EventService
     {
         get
         {
-            if (instance == null)
-            {
-                instance = new EventService();
-            }
+            instance ??= new EventService();
             return instance;
         }
     }  
