@@ -9,6 +9,8 @@ public class GameUIView : MonoBehaviour
     [SerializeField] GameObject rootViewPanel;
     [SerializeField] Image insanityImage;
     [SerializeField] Image redVignette;
+    [SerializeField] Image greenVignette;
+    [SerializeField] Image whiteVignette;
 
     [Header("Keys UI")]
     [SerializeField] TextMeshProUGUI keysFoundText;
@@ -28,6 +30,7 @@ public class GameUIView : MonoBehaviour
         EventService.Instance.PlayerDeathEvent.AddListener(OnPlayerDeath);
         EventService.Instance.OnRatRush.AddListener(setRedVignette);
         EventService.Instance.OnSkullDrop.AddListener(setRedVignette);
+        EventService.Instance.OnPotionDrink.AddListener(setWhiteVignette);
 
         tryAgainButton.onClick.AddListener(onTryAgainButtonClicked);
         quitButton.onClick.AddListener(onQuitButtonClicked);
@@ -56,6 +59,22 @@ public class GameUIView : MonoBehaviour
         redVignette.enabled = true;
         redVignette.canvasRenderer.SetAlpha(0.5f);
         redVignette.CrossFadeAlpha(0, 5, false);
+    }
+
+    // for potion
+    private void setWhiteVignette(int val)
+    {
+        whiteVignette.enabled = true;
+        whiteVignette.canvasRenderer.SetAlpha(0.5f);
+        whiteVignette.CrossFadeAlpha(0, 5, false);
+    }
+
+    // for winning 
+    private void setGreenVignette()
+    {
+        greenVignette.enabled = true;
+        greenVignette.canvasRenderer.SetAlpha(0.5f);
+        greenVignette.CrossFadeAlpha(0, 5, false);
     }
 
     private void OnPlayerEscaped()
