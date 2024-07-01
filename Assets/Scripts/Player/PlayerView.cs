@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerView : MonoBehaviour
@@ -26,8 +23,7 @@ public class PlayerView : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        IInteractable interactable;
-        if (other.TryGetComponent(out interactable) && playerController.IsInteracted)
+        if (other.TryGetComponent(out IInteractable interactable) && playerController.IsInteracted)
         {
             playerController.IsInteracted = false;
             interactable.Interact();

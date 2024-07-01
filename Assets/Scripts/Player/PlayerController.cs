@@ -49,9 +49,7 @@ public class PlayerController
     {
         getInput();
 
-        Quaternion rotation;
-        Vector3 position;
-        calculatePositionRotation(playerRigidbody, transform, out rotation, out position);
+        calculatePositionRotation(playerRigidbody, transform, out Quaternion rotation, out Vector3 position);
 
         playerRigidbody.MoveRotation(rotation);
         playerRigidbody.MovePosition(position);
@@ -60,7 +58,6 @@ public class PlayerController
     public void KillPlayer()
     {
         PlayerState = PlayerState.Dead;
-        EventService.Instance.PlayerDeathEvent.InvokeEvent();
     }
 
     private void onLightsOffByGhost() => PlayerState = PlayerState.InDark;
@@ -76,7 +73,7 @@ public class PlayerController
     }
     private void calculatePositionRotation(Rigidbody playerRigidbody, Transform transform, out Quaternion rotation, out Vector3 position)
     {
-        Vector3 lookRotation = new Vector3(0, mouseX * playerScriptableObject.sensitivity, 0);
+        Vector3 lookRotation = new(0, mouseX * playerScriptableObject.sensitivity, 0);
         Vector3 movement = (transform.forward * verticalAxis + transform.right * horizontalAxis);
 
         rotation = playerRigidbody.rotation * Quaternion.Euler(lookRotation);
@@ -88,5 +85,12 @@ public class PlayerController
             PlayerState = PlayerState.None;
         else
             PlayerState = PlayerState.InDark;
+    }
+
+    private void onLightsTurnedOffByGhost() => PlayerState = PlayerState.InDark;
+
+    private void onKeysPickedUp(int keys)
+    {
+        KeysEquipped = keys;
     }
 }
