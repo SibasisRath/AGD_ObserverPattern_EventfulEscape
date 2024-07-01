@@ -27,6 +27,7 @@ public class GameUIView : MonoBehaviour
         EventService.Instance.PlayerDeathEvent.AddListener(setRedVignette);
         EventService.Instance.PlayerDeathEvent.AddListener(OnPlayerDeath);
         EventService.Instance.OnRatRush.AddListener(setRedVignette);
+        EventService.Instance.OnSkullDrop.AddListener(setRedVignette);
 
         tryAgainButton.onClick.AddListener(onTryAgainButtonClicked);
         quitButton.onClick.AddListener(onQuitButtonClicked);
@@ -39,6 +40,7 @@ public class GameUIView : MonoBehaviour
         EventService.Instance.PlayerDeathEvent.RemoveListener(setRedVignette);
         EventService.Instance.PlayerDeathEvent.RemoveListener(OnPlayerDeath);
         EventService.Instance.OnRatRush.RemoveListener(setRedVignette);
+        EventService.Instance.OnSkullDrop.RemoveListener(setRedVignette);
     }
 
     public void UpdateInsanity(float playerSanity) => insanityImage.rectTransform.localScale = new Vector3(1, playerSanity, 1);
