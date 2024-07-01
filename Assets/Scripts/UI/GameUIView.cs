@@ -21,20 +21,29 @@ public class GameUIView : MonoBehaviour
 
     private void OnEnable()
     {
+        EventService.Instance.OnKeyPickedUp.AddListener(OnKeyEquipped);
+        EventService.Instance.OnLightsOffByGhostEvent.AddListener(setRedVignette);
+        EventService.Instance.PlayerEscapedEvent.AddListener(OnPlayerEscaped);
+        EventService.Instance.PlayerDeathEvent.AddListener(setRedVignette);
+        EventService.Instance.PlayerDeathEvent.AddListener(OnPlayerDeath);
+        EventService.Instance.OnRatRush.AddListener(setRedVignette);
+
         tryAgainButton.onClick.AddListener(onTryAgainButtonClicked);
         quitButton.onClick.AddListener(onQuitButtonClicked);
-        EventService.Instance.OnKeyPickedUp.AddListener(updateKeyText);
-        EventService.Instance.OnLightsOffByGhostEvent.AddListener(setRedVignette);
     }
     private void OnDisable()
     {
-        EventService.Instance.OnKeyPickedUp.RemoveListener(updateKeyText);
+        EventService.Instance.OnKeyPickedUp.RemoveListener(OnKeyEquipped);
         EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(setRedVignette);
+        EventService.Instance.PlayerEscapedEvent.RemoveListener(OnPlayerEscaped);
+        EventService.Instance.PlayerDeathEvent.RemoveListener(setRedVignette);
+        EventService.Instance.PlayerDeathEvent.RemoveListener(OnPlayerDeath);
+        EventService.Instance.OnRatRush.RemoveListener(setRedVignette);
     }
 
     public void UpdateInsanity(float playerSanity) => insanityImage.rectTransform.localScale = new Vector3(1, playerSanity, 1);
 
-    private void updateKeyText(int keys) => keysFoundText.SetText($"Keys Found: {keys}/ 3");
+    private void OnKeyEquipped(int keys) => keysFoundText.SetText($"Keys Found: {keys}/ 3");
     private void onQuitButtonClicked() => Application.Quit();
     private void onTryAgainButtonClicked() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 
@@ -45,6 +54,16 @@ public class GameUIView : MonoBehaviour
         redVignette.enabled = true;
         redVignette.canvasRenderer.SetAlpha(0.5f);
         redVignette.CrossFadeAlpha(0, 5, false);
+    }
+
+    private void OnPlayerEscaped()
+    {
+
+    }
+
+    private void OnPlayerDeath()
+    {
+
     }
 }
 

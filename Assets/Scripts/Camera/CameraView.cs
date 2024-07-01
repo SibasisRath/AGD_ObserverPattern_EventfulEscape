@@ -14,11 +14,13 @@ public class CameraView : MonoBehaviour
     private void OnEnable()
     {
         EventService.Instance.OnLightsOffByGhostEvent.AddListener(Shake);
+        EventService.Instance.PlayerDeathEvent.AddListener(Shake);
     }
 
     private void OnDisable()
     {
         EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(Shake);
+        EventService.Instance.PlayerDeathEvent.RemoveListener(Shake);
     }
 
     private void Start()

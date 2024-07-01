@@ -18,7 +18,6 @@ public class InstructionView : MonoBehaviour
 
     private void Start() => showInstruction(playerSpawnedInstruction);
 
-
     public void ShowInstruction(InstructionType type)
     {
         stopCoroutine(instructionCoroutine);

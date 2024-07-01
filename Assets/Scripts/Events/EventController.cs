@@ -1,6 +1,5 @@
 using System;
 
-
 public class EventController
 {
     public Action baseEvent;
