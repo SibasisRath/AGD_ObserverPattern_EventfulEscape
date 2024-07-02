@@ -9,6 +9,13 @@ public class RatRushEvent : MonoBehaviour
     private float speed = 7.5f;
     private bool rushActive = false;
 
+    private void Start()
+    {
+        GetComponent<Collider>().enabled = true;
+        rats.gameObject.SetActive(false);
+
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<PlayerView>() != null)

@@ -9,13 +9,13 @@ public class LightSwitchView : MonoBehaviour, IInteractable
     private void OnEnable() 
     {
         EventService.Instance.OnLightSwitchToggled.AddListener(OnLightSwitch);
-        EventService.Instance.OnLightsOffByGhostEvent.AddListener(OnLightSwitch);
+        EventService.Instance.OnLightsOffByGhostEvent.AddListener(OnLightSwitchOffByGhost);
     }
 
     private void OnDisable()
     {
         EventService.Instance.OnLightSwitchToggled.RemoveListener(OnLightSwitch);
-        EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(onLightSwitchOffByGhost);
+        EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(OnLightSwitchOffByGhost);
     }
 
     private void Start() => currentState = SwitchState.Off;
@@ -49,7 +49,7 @@ public class LightSwitchView : MonoBehaviour, IInteractable
     {
         foreach (Light lightSource in lightsources)
         {
-            lightSource.enabled |= lights;
+            lightSource.enabled = lights;
         }
         if (lights)
         {
@@ -68,7 +68,7 @@ public class LightSwitchView : MonoBehaviour, IInteractable
         GameService.Instance.GetInstructionView().HideInstruction();
     }
 
-    private void onLightSwitchOffByGhost()
+    private void OnLightSwitchOffByGhost()
     {
         setLights(false);
         GameService.Instance.GetSoundView().PlaySoundEffects(SoundType.SwitchSound);

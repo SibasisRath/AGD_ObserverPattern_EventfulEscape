@@ -24,5 +24,15 @@ public class GameService : GenericMonoSingleton<GameService>
     {
         playerController.KillPlayer();
         soundView.PlaySoundEffects(SoundType.JumpScare1);
+        EventService.Instance.PlayerDeathEvent.InvokeEvent();
     }
+
+    /*public void RestartGame()
+    {
+        // Destroy the current PlayerView and reinstantiate it
+        Destroy(playerView.gameObject);
+        // Assuming you have a way to instantiate the PlayerView, e.g., from a prefab
+        playerView = Instantiate(playerViewPrefab);  // playerViewPrefab should be a reference to the PlayerView prefab
+        InitializePlayerController();
+    }*/
 }

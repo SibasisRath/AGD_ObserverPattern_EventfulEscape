@@ -9,7 +9,6 @@ public class GameUIView : MonoBehaviour
     [SerializeField] GameObject rootViewPanel;
     [SerializeField] Image insanityImage;
     [SerializeField] Image redVignette;
-    [SerializeField] Image greenVignette;
     [SerializeField] Image whiteVignette;
 
     [Header("Keys UI")]
@@ -44,6 +43,7 @@ public class GameUIView : MonoBehaviour
         EventService.Instance.PlayerDeathEvent.RemoveListener(OnPlayerDeath);
         EventService.Instance.OnRatRush.RemoveListener(setRedVignette);
         EventService.Instance.OnSkullDrop.RemoveListener(setRedVignette);
+        EventService.Instance.OnPotionDrink.RemoveListener(setWhiteVignette);
     }
 
     public void UpdateInsanity(float playerSanity) => insanityImage.rectTransform.localScale = new Vector3(1, playerSanity, 1);
@@ -69,22 +69,25 @@ public class GameUIView : MonoBehaviour
         whiteVignette.CrossFadeAlpha(0, 5, false);
     }
 
-    // for winning 
-    private void setGreenVignette()
-    {
-        greenVignette.enabled = true;
-        greenVignette.canvasRenderer.SetAlpha(0.5f);
-        greenVignette.CrossFadeAlpha(0, 5, false);
-    }
-
     private void OnPlayerEscaped()
     {
+        gameEndPanel.SetActive(true);
+        gameEndText.text = "Player Escaped.";
+        gameEndText.color = Color.green;
+        GameService.Instance.GetInstructionView().HideInstruction();
 
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     private void OnPlayerDeath()
     {
+        gameEndPanel.SetActive(true);
+        gameEndText.text = "Player died.";
+        GameService.Instance.GetInstructionView().HideInstruction();
 
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 }
 
