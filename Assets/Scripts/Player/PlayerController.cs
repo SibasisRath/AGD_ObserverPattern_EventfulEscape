@@ -21,17 +21,28 @@ public class PlayerController
         this.playerScriptableObject.KeysEquipped = 0;
         playerState = PlayerState.InDark;
 
-        EventService.Instance.OnLightsOffByGhostEvent.AddListener(onLightsOffByGhost);
+        SubscribeToEvents();
+    }
+
+    private void SubscribeToEvents()
+    {
+        EventService.Instance.OnLightsOffByGhostEvent.AddListener(OnLightsOffByGhost);
         EventService.Instance.OnLightSwitchToggled.AddListener(onLightsToggled);
         EventService.Instance.OnKeyPickedUp.AddListener(OnKeyPickedUp);
-        EventService.Instance.PlayerEscapedEvent.AddListener(DisableControls);
+        EventService.Instance.PlayerEscapedEvent.AddListener(OnPlayerEscaped);
     }
-    ~PlayerController()
+
+    private void UnsubscribeFromEvents()
     {
-        EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(onLightsOffByGhost);
+        EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(OnLightsOffByGhost);
         EventService.Instance.OnLightSwitchToggled.RemoveListener(onLightsToggled);
         EventService.Instance.OnKeyPickedUp.RemoveListener(OnKeyPickedUp);
-        EventService.Instance.PlayerEscapedEvent.RemoveListener(DisableControls);
+        EventService.Instance.PlayerEscapedEvent.RemoveListener(OnPlayerEscaped);
+    }
+
+    ~PlayerController()
+    {
+        UnsubscribeFromEvents();
     }
     public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) ? true : (Input.GetKeyUp(KeyCode.E) ? false : IsInteracted);
 
@@ -58,9 +69,11 @@ public class PlayerController
     public void KillPlayer()
     {
         PlayerState = PlayerState.Dead;
+        DisableControls();
+        UnsubscribeFromEvents();
     }
 
-    private void onLightsOffByGhost() => PlayerState = PlayerState.InDark;
+    private void OnLightsOffByGhost() => PlayerState = PlayerState.InDark;
     private void OnKeyPickedUp(int keys) => KeysEquipped = keys;
     private void DisableControls() => playerView.enabled = false;
 
@@ -87,10 +100,9 @@ public class PlayerController
             PlayerState = PlayerState.InDark;
     }
 
-    private void onLightsTurnedOffByGhost() => PlayerState = PlayerState.InDark;
-
-    private void onKeysPickedUp(int keys)
+    private void OnPlayerEscaped()
     {
-        KeysEquipped = keys;
+        DisableControls();
+        UnsubscribeFromEvents();
     }
 }

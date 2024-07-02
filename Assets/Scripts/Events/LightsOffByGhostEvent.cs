@@ -5,6 +5,11 @@ public class LightsOffByGhostEvent : MonoBehaviour
     [SerializeField] private int keysRequiredToTrigger;
     [SerializeField] private SoundType soundType;
 
+    private void Start()
+    {
+        GetComponent<Collider>().enabled = true;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<PlayerView>() != null && keysRequiredToTrigger == GameService.Instance.GetPlayerController().KeysEquipped)
