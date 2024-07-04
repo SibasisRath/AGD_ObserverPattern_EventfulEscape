@@ -5,6 +5,13 @@ public class LightSwitchView : MonoBehaviour, IInteractable
 {
     [SerializeField] private List<Light> lightsources = new();
     private SwitchState currentState;
+    private bool test;
+
+    public SwitchState CurrentState 
+    { 
+        get => currentState;
+        private set => currentState = value;
+    }
 
     private void OnEnable() 
     {
@@ -18,7 +25,8 @@ public class LightSwitchView : MonoBehaviour, IInteractable
         EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(OnLightSwitchOffByGhost);
     }
 
-    private void Start() => currentState = SwitchState.Off;
+    private void Start() => CurrentState = SwitchState.Off;
+
 
     public void Interact() => EventService.Instance.OnLightSwitchToggled.InvokeEvent();
 
@@ -26,14 +34,14 @@ public class LightSwitchView : MonoBehaviour, IInteractable
     {
         bool lights = false;
 
-        switch (currentState)
+        switch (CurrentState)
         {
             case SwitchState.On:
-                currentState = SwitchState.Off;
+                CurrentState = SwitchState.Off;
                 lights = false;
                 break;
             case SwitchState.Off:
-                currentState = SwitchState.On;
+                CurrentState = SwitchState.On;
                 lights = true;
                 break;
             case SwitchState.Unresponsive:
@@ -53,11 +61,11 @@ public class LightSwitchView : MonoBehaviour, IInteractable
         }
         if (lights)
         {
-            currentState = SwitchState.On;
+            CurrentState = SwitchState.On;
         }
         else
         {
-            currentState = SwitchState.Off;
+            CurrentState = SwitchState.Off;
         }
     }
 

@@ -1,15 +1,17 @@
+using System;
+using System.Collections;
 using UnityEngine;
-public class PlayerController
+public class PlayerController : IDisposable
 {
-    private PlayerView playerView;
-    private PlayerScriptableObject playerScriptableObject;
+    private readonly PlayerView playerView;
+    private readonly PlayerScriptableObject playerScriptableObject;
     private float velocity;
     private float horizontalAxis;
     private float verticalAxis;
     private float mouseX;
     private PlayerState playerState;
 
-    public bool IsInteracted;
+    public bool IsInteracted { get; set; }
     public int KeysEquipped { get => playerScriptableObject.KeysEquipped; set => playerScriptableObject.KeysEquipped = value; }
     public PlayerState PlayerState { get => playerState; private set => playerState = value; }
 
@@ -19,7 +21,7 @@ public class PlayerController
         this.playerView.SetController(this);
         this.playerScriptableObject = playerScriptableObject;
         this.playerScriptableObject.KeysEquipped = 0;
-        playerState = PlayerState.InDark;
+        PlayerState = PlayerState.InDark;
 
         SubscribeToEvents();
     }
@@ -27,7 +29,7 @@ public class PlayerController
     private void SubscribeToEvents()
     {
         EventService.Instance.OnLightsOffByGhostEvent.AddListener(OnLightsOffByGhost);
-        EventService.Instance.OnLightSwitchToggled.AddListener(onLightsToggled);
+        EventService.Instance.OnLightSwitchToggled.AddListener(OnLightsToggled);
         EventService.Instance.OnKeyPickedUp.AddListener(OnKeyPickedUp);
         EventService.Instance.PlayerEscapedEvent.AddListener(OnPlayerEscaped);
     }
@@ -35,16 +37,18 @@ public class PlayerController
     private void UnsubscribeFromEvents()
     {
         EventService.Instance.OnLightsOffByGhostEvent.RemoveListener(OnLightsOffByGhost);
-        EventService.Instance.OnLightSwitchToggled.RemoveListener(onLightsToggled);
+        EventService.Instance.OnLightSwitchToggled.RemoveListener(OnLightsToggled);
         EventService.Instance.OnKeyPickedUp.RemoveListener(OnKeyPickedUp);
         EventService.Instance.PlayerEscapedEvent.RemoveListener(OnPlayerEscaped);
     }
 
-    ~PlayerController()
+    public void Dispose()
     {
         UnsubscribeFromEvents();
+        EventService.Instance.StopCheckingForShadowMaster.InvokeEvent();
     }
-    public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) ? true : (Input.GetKeyUp(KeyCode.E) ? false : IsInteracted);
+
+    public void Interact() => IsInteracted = Input.GetKeyDown(KeyCode.E) || (!Input.GetKeyUp(KeyCode.E) && IsInteracted);
 
     public void Jump(Rigidbody playerRigidbody, Transform transform)
     {
@@ -58,9 +62,9 @@ public class PlayerController
 
     public void Move(Rigidbody playerRigidbody, Transform transform)
     {
-        getInput();
+        GetInput();
 
-        calculatePositionRotation(playerRigidbody, transform, out Quaternion rotation, out Vector3 position);
+        CalculatePositionRotation(playerRigidbody, transform, out Quaternion rotation, out Vector3 position);
 
         playerRigidbody.MoveRotation(rotation);
         playerRigidbody.MovePosition(position);
@@ -68,23 +72,35 @@ public class PlayerController
 
     public void KillPlayer()
     {
+        EventService.Instance.StopCheckingForShadowMaster.InvokeEvent();
         PlayerState = PlayerState.Dead;
         DisableControls();
-        UnsubscribeFromEvents();
     }
 
-    private void OnLightsOffByGhost() => PlayerState = PlayerState.InDark;
+    private void OnPlayerEscaped()
+    {
+        Debug.Log("inside player controller.");
+        EventService.Instance.StopCheckingForShadowMaster.InvokeEvent();
+        PlayerState = PlayerState.Escaped;
+        //DisableControls();
+    }
+
+    private void OnLightsOffByGhost()
+    {
+        PlayerState = PlayerState.InDark;
+        EventService.Instance.StartCheckingForShadowMaster.InvokeEvent();
+    }
     private void OnKeyPickedUp(int keys) => KeysEquipped = keys;
     private void DisableControls() => playerView.enabled = false;
 
-    private void getInput()
+    private void GetInput()
     {
         horizontalAxis = Input.GetAxis("Horizontal");
         verticalAxis = Input.GetAxis("Vertical");
         mouseX = Input.GetAxis("Mouse X");
         velocity = Input.GetKey(KeyCode.LeftShift) ? playerScriptableObject.sprintSpeed : playerScriptableObject.walkSpeed;
     }
-    private void calculatePositionRotation(Rigidbody playerRigidbody, Transform transform, out Quaternion rotation, out Vector3 position)
+    private void CalculatePositionRotation(Rigidbody playerRigidbody, Transform transform, out Quaternion rotation, out Vector3 position)
     {
         Vector3 lookRotation = new(0, mouseX * playerScriptableObject.sensitivity, 0);
         Vector3 movement = (transform.forward * verticalAxis + transform.right * horizontalAxis);
@@ -92,17 +108,18 @@ public class PlayerController
         rotation = playerRigidbody.rotation * Quaternion.Euler(lookRotation);
         position = (transform.position) + (velocity * movement) * Time.fixedDeltaTime;
     }
-    private void onLightsToggled()
+    private void OnLightsToggled()
     {
         if (PlayerState == PlayerState.InDark)
+        {
             PlayerState = PlayerState.None;
-        else
+            EventService.Instance.StopCheckingForShadowMaster.InvokeEvent();
+        }
+        else 
+        {
             PlayerState = PlayerState.InDark;
-    }
-
-    private void OnPlayerEscaped()
-    {
-        DisableControls();
-        UnsubscribeFromEvents();
+            EventService.Instance.StartCheckingForShadowMaster.InvokeEvent();
+        }
+            
     }
 }

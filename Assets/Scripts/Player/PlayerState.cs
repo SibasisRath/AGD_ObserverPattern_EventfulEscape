@@ -2,5 +2,6 @@
 {
     None,
     InDark,
-    Dead
+    Dead,
+    Escaped
 }

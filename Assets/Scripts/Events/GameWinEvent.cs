@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameWinEvent : MonoBehaviour
@@ -9,10 +7,15 @@ public class GameWinEvent : MonoBehaviour
     private void OnEnable()
     {
         boxCollider.enabled = true;
+        Debug.Log("collider enabled.");
     }
     private void OnTriggerEnter(Collider other)
     {
-        EventService.Instance.PlayerEscapedEvent.InvokeEvent();
-        boxCollider.enabled = false;
+        if (other.gameObject.GetComponent<PlayerView>() != null)
+        {
+            EventService.Instance.PlayerEscapedEvent.InvokeEvent();
+            Debug.Log("game win trigger");
+            boxCollider.enabled = false;
+        }
     }
 }

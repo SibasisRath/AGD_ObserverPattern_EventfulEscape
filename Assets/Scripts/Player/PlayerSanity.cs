@@ -15,6 +15,7 @@ public class PlayerSanity : MonoBehaviour
         EventService.Instance.OnRatRush.AddListener(OnSupernaturalEvent);
         EventService.Instance.OnSkullDrop.AddListener(OnSupernaturalEvent);
         EventService.Instance.OnPotionDrink.AddListener(OnDrankPotion);
+        EventService.Instance.PlayerEscapedEvent.AddListener(PlayerSanityLeft);
     }
 
     private void OnDisable()
@@ -22,6 +23,7 @@ public class PlayerSanity : MonoBehaviour
         EventService.Instance.OnRatRush.RemoveListener(OnSupernaturalEvent);
         EventService.Instance.OnSkullDrop.RemoveListener(OnSupernaturalEvent);
         EventService.Instance.OnPotionDrink.RemoveListener(OnDrankPotion);
+        EventService.Instance.PlayerEscapedEvent.RemoveListener(PlayerSanityLeft);
     }
 
     private void Start()
@@ -31,15 +33,15 @@ public class PlayerSanity : MonoBehaviour
     }
     void Update()
     {
-        if (playerController.PlayerState == PlayerState.Dead)
+        if (playerController.PlayerState == PlayerState.Dead || playerController.PlayerState == PlayerState.Escaped)
             return;
 
-        float sanityDrop = updateSanity();
+        float sanityDrop = UpdateSanity();
 
-        increaseSanity(sanityDrop);
+        IncreaseSanity(sanityDrop);
     }
 
-    private float updateSanity()
+    private float UpdateSanity()
     {
         float sanityDrop = sanityDropRate * Time.deltaTime;
         if (playerController.PlayerState == PlayerState.InDark)
@@ -49,7 +51,7 @@ public class PlayerSanity : MonoBehaviour
         return sanityDrop;
     }
 
-    private void increaseSanity(float amountToDecrease)
+    private void IncreaseSanity(float amountToDecrease)
     {
         Mathf.Floor(sanityLevel -= amountToDecrease);
         if (sanityLevel <= 0)
@@ -60,7 +62,7 @@ public class PlayerSanity : MonoBehaviour
         GameService.Instance.GetGameUI().UpdateInsanity(1f - sanityLevel / maxSanity);
     }
 
-    private void decreaseSanity(float amountToIncrease)
+    private void DecreaseSanity(float amountToIncrease)
     {
         Mathf.Floor(sanityLevel += amountToIncrease);
         if (sanityLevel > 100)
@@ -71,11 +73,18 @@ public class PlayerSanity : MonoBehaviour
     }
     private void OnSupernaturalEvent()
     {
-        increaseSanity(sanityDropAmountPerEvent);
+        IncreaseSanity(sanityDropAmountPerEvent);
     }
 
     private void OnDrankPotion(int potionEffect)
     {
-        decreaseSanity(potionEffect);
+        DecreaseSanity(potionEffect);
+    }
+
+    private void PlayerSanityLeft()
+    {
+        float leftSanityPercent = (sanityLevel / maxSanity) * 100;
+        EventService.Instance.CheckingTormentedSurvivorAchievement.InvokeEvent(leftSanityPercent);
+        Debug.Log("player last sanity " + leftSanityPercent);
     }
 }
