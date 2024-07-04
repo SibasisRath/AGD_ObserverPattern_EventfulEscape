@@ -6,7 +6,10 @@ public class PlayerView : MonoBehaviour
     private Rigidbody playerRigidbody;
     private PlayerController playerController;
 
-    private void Start() => playerRigidbody = GetComponent<Rigidbody>();
+    private void Start()
+    {
+        playerRigidbody = GetComponent<Rigidbody>();
+    }
 
     private void Update()
     {

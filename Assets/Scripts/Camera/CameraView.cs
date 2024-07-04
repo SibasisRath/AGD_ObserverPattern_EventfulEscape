@@ -25,6 +25,7 @@ public class CameraView : MonoBehaviour
         EventService.Instance.PlayerDeathEvent.RemoveListener(Shake);
         EventService.Instance.OnRatRush.RemoveListener(Shake);
         EventService.Instance.OnSkullDrop.RemoveListener(Shake);
+        StopAllCoroutines();
     }
 
     private void Start()
@@ -34,11 +35,11 @@ public class CameraView : MonoBehaviour
 
     private void Update()
     {
-        Cursor.visible = false;
-        cameraMovement();
+        //Cursor.visible = false;
+        CameraMovement();
     }
 
-    private void cameraMovement()
+    private void CameraMovement()
     {
         float velocity = sensitivity * -Input.GetAxis("Mouse Y");
         transform.Rotate(velocity, 0f, 0f);
@@ -53,7 +54,7 @@ public class CameraView : MonoBehaviour
     private void Shake()
     {
         if (shakeCorroutine != null)
-            stopCoroutine(shakeCorroutine);
+            StopCoroutine(shakeCorroutine);
         shakeCorroutine = StartCoroutine(ShakeCoroutine(defaultShakeDuration, defaultShakeMagnitude));
     }
 
@@ -72,11 +73,11 @@ public class CameraView : MonoBehaviour
         }
 
         transform.localPosition = originalPosition;
-        stopCoroutine(shakeCorroutine);
+        StopCoroutine(shakeCorroutine);
     }
 
-    private void stopCoroutine(Coroutine coroutine)
+    /*private void stopCoroutine(Coroutine coroutine)
     {
         StopCoroutine(coroutine);
-    }
+    }*/
 }
