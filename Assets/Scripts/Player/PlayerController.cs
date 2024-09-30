@@ -82,7 +82,7 @@ public class PlayerController : IDisposable
         Debug.Log("inside player controller.");
         EventService.Instance.StopCheckingForShadowMaster.InvokeEvent();
         PlayerState = PlayerState.Escaped;
-        //DisableControls();
+        DisableControls();
     }
 
     private void OnLightsOffByGhost()
